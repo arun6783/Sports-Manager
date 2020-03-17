@@ -5,7 +5,7 @@ import AboutUs from './Pages/About-Us'
 import { Switch, Route } from 'react-router-dom';
 import Header from "./Components/Header-Component/Header-Component";
 import SignInAndSignUp from "./Pages/Sign-In-sign-up";
-import { auth } from './firebase/firebase.utils';
+import { auth , createUserProfileDocument } from './firebase/firebase.utils';
 class App extends React.Component {
   constructor(){
     super();
@@ -18,9 +18,28 @@ class App extends React.Component {
   unsubscribeFromAuth = null;
 
   componentDidMount(){
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(user=> {
-      this.setState({currentUser: user});
-      console.log(user);
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth=> {  
+        // createUserProfileDocument(user);
+
+        if(userAuth){
+          const userRef = createUserProfileDocument(userAuth);
+          (await userRef).onSnapshot(snapShot=>{
+            this.setState({
+              currentUser: { 
+                id: snapShot.id,
+                ...snapShot.data()
+              }
+            }, ()=>{
+
+              console.log(this.state);
+            });
+          });
+    
+        }
+        //console.log('this line incase if user auth is null', userAuth);
+        //but this line of code will be called as soon as user logs in , because creaete userprofiledocument onsnapshot is async.
+        //here user auth will be just the object what firebase returns.
+        this.setState({currentUser: userAuth});
     });
 
   }
