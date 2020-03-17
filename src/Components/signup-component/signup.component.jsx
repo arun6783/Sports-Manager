@@ -18,7 +18,7 @@ export default class SignUp extends React.Component {
     }
     handleChange = (e)=>{
         const {name, value} = e.target;
-        this.state({
+        this.setState({
             [name]:value
         });
     }
@@ -55,10 +55,10 @@ export default class SignUp extends React.Component {
         <h2 className='title'>I do no have a account</h2>
         <span>Sign up with your email and password</span>
         <form className='sign-up-form' onSubmit={this.handleSubmit}>
-            <FormInput text='text' name='displayName' value={displayName} handleChange={this.handleChange} label='Display Name' required/>
-            <FormInput text='text' name='email' value={email} handleChange={this.handleChange} label='Email' required/>
-            <FormInput text='text' name='password' value={password} handleChange={this.handleChange} label='Password' required/>
-            <FormInput text='text' name='confirmPassword' value={confirmPassword} handleChange={this.handleChange} label='Confirm Password' required/>
+            <FormInput type='text' name='displayName' value={displayName} handleChange={this.handleChange} label='Display Name' required/>
+            <FormInput type='email' name='email' value={email} handleChange={this.handleChange} label='Email' required/>
+            <FormInput type='password' name='password' value={password} handleChange={this.handleChange} label='Password' required/>
+            <FormInput type='password' name='confirmPassword' value={confirmPassword} handleChange={this.handleChange} label='Confirm Password' required/>
             <CustomButton type='submit'>Sign up</CustomButton>
         </form>
       </div>
