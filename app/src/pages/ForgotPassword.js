@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Button from '../components/Button'
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('')
@@ -35,12 +36,7 @@ const ForgotPassword = () => {
             required
           />
         </div>
-        <input
-          type="button"
-          value="Reset Password"
-          onClick={handleForgotPassword}
-          className="w-full bg-blue-500 text-white p-2 rounded mt-4"
-        />
+        <Button onClick={handleForgotPassword}>Reset Password</Button>
         <p className="text-right mt-4">
           Remembered your password?{' '}
           <a href="/login" className="text-blue-500">

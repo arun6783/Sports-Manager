@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Button from '../components/Button'
 
 const Register = () => {
   const [firstName, setFirstName] = useState('')
@@ -71,16 +72,14 @@ const Register = () => {
             required
           />
         </div>
-        <input
-          type="button"
+        <Button
           onClick={() => {
-            console.log('register button clicked')
+            alert('hhh')
             handleRegister()
           }}
-          className="w-full bg-blue-500 text-white p-2 rounded mt-4"
         >
-          asdasd
-        </input>
+          Register
+        </Button>
         <p className="text-right mt-4">
           Already registered?{' '}
           <a href="/login" className="text-blue-500">
