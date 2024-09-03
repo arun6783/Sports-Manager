@@ -1,6 +1,7 @@
 // src/components/ConfigureClubNight.js
 import React, { useState } from 'react'
 import axios from 'axios'
+import { Form, Button, Container } from 'react-bootstrap'
 
 const ConfigureClubNight = ({ clubId }) => {
   const [sessionType, setSessionType] = useState('normalPeg')
@@ -28,40 +29,44 @@ const ConfigureClubNight = ({ clubId }) => {
   }
 
   return (
-    <div>
+    <Container>
       <h2>Configure Club Night</h2>
-      <form onSubmit={handleConfigure}>
-        <label>Session Type:</label>
-        <select
-          value={sessionType}
-          onChange={(e) => setSessionType(e.target.value)}
-        >
-          <option value="normalPeg">Normal Peg</option>
-          <option value="threeTier">3-Tier Peg</option>
-          <option value="fixedPair">Fixed Pair Round Robin</option>
-        </select>
-
+      <Form onSubmit={handleConfigure}>
+        <Form.Group controlId="sessionType">
+          <Form.Label>Session Type:</Form.Label>
+          <Form.Control
+            as="select"
+            value={sessionType}
+            onChange={(e) => setSessionType(e.target.value)}
+          >
+            <option value="normalPeg">Normal Peg</option>
+            <option value="threeTier">3-Tier Peg</option>
+            <option value="fixedPair">Fixed Pair Round Robin</option>
+          </Form.Control>
+        </Form.Group>
         <h3>Courts</h3>
-        <input
-          type="text"
-          placeholder="Court Name"
-          value={courtName}
-          onChange={(e) => setCourtName(e.target.value)}
-        />
-        <button type="button" onClick={handleAddCourt}>
+        <Form.Group controlId="courtName">
+          <Form.Control
+            type="text"
+            placeholder="Court Name"
+            value={courtName}
+            onChange={(e) => setCourtName(e.target.value)}
+          />
+        </Form.Group>
+        <Button variant="secondary" type="button" onClick={handleAddCourt}>
           Add Court
-        </button>
-
+        </Button>
         <ul>
           {courts.map((court, index) => (
             <li key={index}>{court.name}</li>
           ))}
         </ul>
-
-        <button type="submit">Save Configuration</button>
-      </form>
+        <Button variant="primary" type="submit">
+          Save Configuration
+        </Button>
+      </Form>
       {message && <p>{message}</p>}
-    </div>
+    </Container>
   )
 }
 

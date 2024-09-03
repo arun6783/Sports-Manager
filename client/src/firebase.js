@@ -1,6 +1,7 @@
+// src/firebase.js
 import { initializeApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import { getFirestore, setLogLevel } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -12,7 +13,11 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+const googleAuthProvider = new GoogleAuthProvider()
+const db = getFirestore(app)
 
-export const auth = getAuth(app)
-export const firestore = getFirestore(app)
-export const googleAuthProvider = new GoogleAuthProvider()
+// Enable Firestore logging for debugging
+setLogLevel('debug')
+
+export { auth, googleAuthProvider, db }

@@ -1,6 +1,7 @@
 // src/components/SetAdmin.js
 import React, { useState } from 'react'
 import axios from 'axios'
+import { Form, Button, Container } from 'react-bootstrap'
 
 const SetAdmin = ({ clubId }) => {
   const [playerId, setPlayerId] = useState('')
@@ -22,27 +23,32 @@ const SetAdmin = ({ clubId }) => {
   }
 
   return (
-    <div>
+    <Container>
       <h2>Set Player as Admin</h2>
-      <form onSubmit={handleSetAdmin}>
-        <input
-          type="text"
-          placeholder="Player ID"
-          value={playerId}
-          onChange={(e) => setPlayerId(e.target.value)}
-        />
-        <label>
-          <input
+      <Form onSubmit={handleSetAdmin}>
+        <Form.Group controlId="playerId">
+          <Form.Label>Player ID</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Player ID"
+            value={playerId}
+            onChange={(e) => setPlayerId(e.target.value)}
+          />
+        </Form.Group>
+        <Form.Group controlId="isAdmin">
+          <Form.Check
             type="checkbox"
+            label="Admin"
             checked={isAdmin}
             onChange={(e) => setIsAdmin(e.target.checked)}
           />
-          Admin
-        </label>
-        <button type="submit">Set Admin</button>
-      </form>
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Set Admin
+        </Button>
+      </Form>
       {message && <p>{message}</p>}
-    </div>
+    </Container>
   )
 }
 

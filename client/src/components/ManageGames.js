@@ -1,6 +1,7 @@
 // src/components/ManageGames.js
 import React, { useState } from 'react'
 import axios from 'axios'
+import { Form, Button, Container } from 'react-bootstrap'
 
 const ManageGames = ({ clubId }) => {
   const [courtId, setCourtId] = useState('')
@@ -35,26 +36,32 @@ const ManageGames = ({ clubId }) => {
   }
 
   return (
-    <div>
+    <Container>
       <h2>Manage Games</h2>
-      <input
-        type="text"
-        placeholder="Court ID"
-        value={courtId}
-        onChange={(e) => setCourtId(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Player IDs (comma-separated)"
-        value={players.join(',')}
-        onChange={(e) => setPlayers(e.target.value.split(','))}
-      />
-      <button onClick={handleStartGame}>Start Game</button>
-      <button onClick={handleEndGame} disabled={!gameId}>
+      <Form.Group controlId="courtId">
+        <Form.Control
+          type="text"
+          placeholder="Court ID"
+          value={courtId}
+          onChange={(e) => setCourtId(e.target.value)}
+        />
+      </Form.Group>
+      <Form.Group controlId="players">
+        <Form.Control
+          type="text"
+          placeholder="Player IDs (comma-separated)"
+          value={players.join(',')}
+          onChange={(e) => setPlayers(e.target.value.split(','))}
+        />
+      </Form.Group>
+      <Button variant="success" onClick={handleStartGame}>
+        Start Game
+      </Button>
+      <Button variant="danger" onClick={handleEndGame} disabled={!gameId}>
         End Game
-      </button>
+      </Button>
       {message && <p>{message}</p>}
-    </div>
+    </Container>
   )
 }
 

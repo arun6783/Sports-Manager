@@ -1,7 +1,7 @@
 // src/components/AddPlayer.js
 import React, { useState } from 'react'
-import axios from 'axios'
 import { Form, Button, Container } from 'react-bootstrap'
+import { addPlayer } from '../utils/api' // Import the addPlayer function from utils/api
 
 const AddPlayer = ({ clubId }) => {
   const [playerName, setPlayerName] = useState('')
@@ -12,13 +12,13 @@ const AddPlayer = ({ clubId }) => {
   const handleAddPlayer = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.post('/api/players/add', {
+      const response = await addPlayer({
         clubId,
         playerName,
         playerEmail,
         isGuest,
       })
-      setMessage(response.data.message)
+      setMessage(response.message)
     } catch (error) {
       setMessage(error.response.data.error)
     }
