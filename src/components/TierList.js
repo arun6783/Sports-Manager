@@ -1,7 +1,6 @@
-// TierList.js
 import React, { useState } from 'react'
 
-const TierList = ({ tiers, onTiersChange }) => {
+const TierList = ({ tiers, setTiers }) => {
   const [newTier, setNewTier] = useState({ name: '', description: '' })
   const [editIndex, setEditIndex] = useState(null)
 
@@ -12,10 +11,10 @@ const TierList = ({ tiers, onTiersChange }) => {
       const updatedTiers = tiers.map((tier, index) =>
         index === editIndex ? newTier : tier
       )
-      onTiersChange(updatedTiers)
+      setTiers(updatedTiers)
       setEditIndex(null)
     } else {
-      onTiersChange([...tiers, newTier])
+      setTiers([...tiers, newTier])
     }
     setNewTier({ name: '', description: '' })
   }
@@ -26,7 +25,7 @@ const TierList = ({ tiers, onTiersChange }) => {
   }
 
   const handleDeleteTier = (index) => {
-    onTiersChange(tiers.filter((_, i) => i !== index))
+    setTiers(tiers.filter((_, i) => i !== index))
     if (editIndex === index) {
       setEditIndex(null)
       setNewTier({ name: '', description: '' })

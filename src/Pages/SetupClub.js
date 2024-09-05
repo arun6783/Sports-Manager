@@ -1,4 +1,3 @@
-// SetupClub.js
 import React, { useState } from 'react'
 import Step1ClubDetails from '../components/Step1ClubDetails'
 import Step2Tiers from '../components/Step2Tiers'
@@ -71,6 +70,8 @@ const SetupClub = () => {
             setPlayers={setPlayers}
             onNext={handleNextStep}
             onPrev={handlePrevStep}
+            tiers={tiers}
+            rules={rules}
           />
         )
       case 3:
@@ -80,6 +81,8 @@ const SetupClub = () => {
             setPlayers={setPlayers}
             onNext={handleNextStep}
             onPrev={handlePrevStep}
+            tiers={tiers}
+            rules={rules}
           />
         )
       case 4:
