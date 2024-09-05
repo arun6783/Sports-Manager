@@ -1,6 +1,1 @@
-{
-  "watch": ["server.js", "api", "middleware"],
-  "ext": "js,json",
-  "ignore": ["dist/*"],
-  "exec": "babel-node server.js"
-}
+{}

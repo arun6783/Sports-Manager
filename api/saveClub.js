@@ -4,7 +4,7 @@ const { createOrUpdateClub } = require('../lib/clubApi')
 
 module.exports = async function handler(req, res) {
   if (req.method === 'POST') {
-    await validateClubData(req, res, () => {})
+    await validateClubData[0].run(req) 
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() })

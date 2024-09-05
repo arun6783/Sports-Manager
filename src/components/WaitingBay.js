@@ -43,16 +43,14 @@ function WaitingBay({ players, onAssignCourt, removePlayer }) {
         return false
     }
   }
+
   const isAssignButtonVisible = selectedPlayers.length === 4
 
-  const waitingBayWithPlayers = () => {
-    return (
-      <div className="p-4 bg-gray-100 rounded">
-        <div className="flex justify-between">
-          <p className="text-l font-bold mb-3 ">Next</p>
-          <p className="text-xl font-bold mb-3">Waiting Bay</p>
-        </div>
-        <div className="flex overflow-x-auto">
+  return (
+    <div className="card bg-light mb-4">
+      <div className="card-body">
+        <h5 className="card-title">Waiting Bay</h5>
+        <div className="d-flex flex-wrap">
           {players.map((player, index) => (
             <Player
               key={player.name}
@@ -62,34 +60,20 @@ function WaitingBay({ players, onAssignCourt, removePlayer }) {
               isSelected={selectedPlayers.some((p) => p.name === player.name)}
               isEnabled={isPlayerSelectable(player, index)}
               onSelect={() => handlePlayerSelect(player)}
-              removePlayer={() => {
-                removePlayer(player.name)
-              }}
+              removePlayer={() => removePlayer(player.name)}
             />
           ))}
         </div>
-
         {isAssignButtonVisible && (
           <button
-            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="btn btn-primary mt-3"
             onClick={() => onAssignCourt(selectedPlayers)}
           >
             Assign to Court
           </button>
         )}
       </div>
-    )
-  }
-
-  const waitingBayNoPlayers = () => {
-    return (
-      <div className="p-4 bg-gray-100 rounded">
-        <p>Add players from top right menu to continue...</p>
-      </div>
-    )
-  }
-  return (
-    <>{players.length > 0 ? waitingBayWithPlayers() : waitingBayNoPlayers()}</>
+    </div>
   )
 }
 

@@ -28,21 +28,26 @@ const ClubNight = ({ rules, numCourts }) => {
   }
 
   return (
-    <div className="p-4">
-      <h1>Club Night</h1>
-      <p>Time Elapsed: {elapsedTime} seconds</p>
-      <WaitingBay players={players} onAssignCourt={handleAddPlayer} />
-      <div className="flex flex-wrap">
-        {courts.map((court) => (
-          <Court key={court.id} courtData={court} />
-        ))}
+    <div className="container">
+      <div className="card mb-4">
+        <div className="card-header">
+          <h4>Club Night</h4>
+          <p className="text-muted">Time Elapsed: {elapsedTime} seconds</p>
+        </div>
+        <div className="card-body">
+          <WaitingBay players={players} onAssignCourt={handleAddPlayer} />
+          <div className="row">
+            {courts.map((court) => (
+              <div key={court.id} className="col-md-6 col-lg-4">
+                <Court courtData={court} />
+              </div>
+            ))}
+          </div>
+          <button className="btn btn-primary mt-3" onClick={handleAddCourt}>
+            Add Court
+          </button>
+        </div>
       </div>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-        onClick={handleAddCourt}
-      >
-        Add Court
-      </button>
     </div>
   )
 }

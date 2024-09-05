@@ -5,10 +5,12 @@ const Footer = () => {
   const { clubName } = useClub()
 
   return (
-    <footer className="bg-gray-700 text-white text-center absolute bottom-0 w-full">
-      <p>
-        &copy; {new Date().getFullYear()} {clubName || 'My Badminton Club'}
-      </p>
+    <footer className="footer bg-dark text-white text-center py-3">
+      <div className="container">
+        <p>
+          &copy; {new Date().getFullYear()} {clubName || 'My Badminton Club'}
+        </p>
+      </div>
     </footer>
   )
 }

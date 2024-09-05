@@ -46,14 +46,15 @@ const Home = () => {
   }
 
   return (
-    <div className="home-page">
-      <h1>Welcome to the Club Manager</h1>
-
-      <button onClick={getClub} className="club-fetch-button">
-        Get Club with Name 'Adidda'
-      </button>
+    <div className="container mt-5">
+      <h1 className="text-center">Welcome to the Club Manager</h1>
+      <div className="text-center">
+        <button onClick={getClub} className="btn btn-primary mt-3">
+          Get Club with Name 'Adidda'
+        </button>
+      </div>
       {clubResponse && (
-        <pre className="club-response">Club Response: {clubResponse}</pre>
+        <pre className="mt-3 alert alert-info">{clubResponse}</pre>
       )}
     </div>
   )
