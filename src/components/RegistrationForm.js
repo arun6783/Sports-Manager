@@ -16,7 +16,6 @@ const RegistrationForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Handle form submission, e.g., send data to the backend
     console.log('Form Data:', formData)
   }
 

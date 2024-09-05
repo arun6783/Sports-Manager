@@ -1,7 +1,14 @@
+// PlayerFormModal.js
 import React, { useState, useEffect } from 'react'
 import Modal from '../components/Modal'
 
-const PlayerFormModal = ({ isOpen, onClose, onSave, playerToEdit, tiers }) => {
+const PlayerFormModal = ({
+  isOpen,
+  onClose,
+  onSave,
+  playerToEdit,
+  tiers = [],
+}) => {
   const [playerName, setPlayerName] = useState('')
   const [selectedTier, setSelectedTier] = useState('')
 
