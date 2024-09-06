@@ -1,0 +1,44 @@
+/* src/styles/Player.css */
+.player-card {
+  width: 150px;
+  padding: 10px;
+  border: 2px solid #ced4da;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #f8f9fa;
+}
+
+.player-card:hover {
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.selected-player {
+  border-color: #007bff;
+  background-color: #e7f1ff;
+}
+
+.disabled-player {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.player-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #343a40;
+}
+
+.remove-icon {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: #dc3545;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.remove-icon:hover {
+  color: #bd2130;
+}

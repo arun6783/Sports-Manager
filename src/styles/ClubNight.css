@@ -1,0 +1,71 @@
+/* src/styles/ClubNight.css */
+
+/* Style for the waiting bay container */
+.waiting-bay {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+/* Courts container */
+.courts-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* Court card styles */
+.court-card {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  flex-basis: 30%; /* Display as cards */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.court-card h5 {
+  margin-bottom: 10px;
+}
+
+.court-card button {
+  margin-top: 10px;
+  margin-right: 5px;
+}
+
+/* Disabled court style */
+.disabled-court {
+  background-color: #f0f0f0;
+  border-color: #999;
+  color: #999;
+}
+
+.disabled-court button {
+  display: none; /* Hide buttons for disabled courts */
+}
+
+.disabled-court .btn-success {
+  display: inline-block; /* Only show enable button */
+}
+/* src/styles/ClubNight.css */
+
+.disabled-court {
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  color: #6c757d;
+  opacity: 0.5;
+}
+
+.disabled-court button {
+  display: none; /* Hide buttons for disabled court */
+}
+
+.disabled-court .btn-success {
+  display: inline-block; /* Only show enable button */
+}
+.mt-5 {
+  margin-top: 20px; 
+}

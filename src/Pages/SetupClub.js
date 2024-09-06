@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Step1ClubDetails from '../components/Step1ClubDetails'
 import Step2Tiers from '../components/Step2Tiers'
 import Step3Players from '../components/Step3Players'
@@ -7,13 +7,39 @@ import { useMessage } from '../Context/MessageContext'
 
 const SetupClub = () => {
   const [currentStep, setCurrentStep] = useState(1)
-  const [clubName, setClubName] = useState('')
+  const [clubName, setClubName] = useState('Adidda')
   const [rules, setRules] = useState('round-robin')
   const [numCourts, setNumCourts] = useState(1)
   const [players, setPlayers] = useState([])
   const [tiers, setTiers] = useState([])
 
   const { showMessage } = useMessage()
+
+  // Fetch existing club data on component mount
+  useEffect(() => {
+    const fetchClubData = async () => {
+      try {
+        const response = await fetch(`/api/getClub?clubName=${clubName}`)
+        if (response.ok) {
+          const club = await response.json()
+          setClubName(club.name)
+          setRules(club.rules)
+          setNumCourts(club.numCourts)
+          setPlayers(club.players)
+          setTiers(club.tiers || [])
+          setCurrentStep(1) // Reset to the first step
+        } else if (response.status === 404) {
+          showMessage('warning', 'Club not found. You can create a new club.')
+        } else {
+          throw new Error('Failed to load club data')
+        }
+      } catch (error) {
+        showMessage('error', error.message)
+      }
+    }
+
+    fetchClubData()
+  }, [clubName, showMessage])
 
   const handleNextStep = () => {
     setCurrentStep((prev) => prev + 1)
@@ -25,6 +51,7 @@ const SetupClub = () => {
 
   const handleSaveClub = async () => {
     try {
+      console.log('**tiers', tiers)
       const response = await fetch('/api/saveClub', {
         method: 'POST',
         headers: {

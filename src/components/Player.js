@@ -1,52 +1,33 @@
+// src/components/Player.js
+
 import React from 'react'
-import { PLAYER_GROUP } from '../shared/Constants'
+import { Card } from 'react-bootstrap'
+import { FaTimesCircle } from 'react-icons/fa'
+import '../styles/Player.css'
 
-function Player({
-  name,
-  group,
-  isNext,
-  isSelected,
-  onSelect,
-  isEnabled,
-  removePlayer,
-}) {
-  const bgColor = (group) => {
-    switch (group) {
-      case PLAYER_GROUP.DIV1:
-        return 'bg-danger'
-      case PLAYER_GROUP.DIV2:
-        return 'bg-success'
-      case PLAYER_GROUP.LEISURE:
-        return 'bg-secondary'
-      default:
-        return 'bg-light'
-    }
-  }
-
+function Player({ name, isSelected, isEnabled, onSelect, removePlayer }) {
   return (
-    <div className="d-inline-block m-2">
-      <div
-        className={`p-2 ${bgColor(group)} border ${
-          isNext ? 'border-primary' : 'border-light'
-        } rounded-lg shadow ${
-          isEnabled ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'
-        }`}
-        onClick={() => isEnabled && onSelect(name, group)}
-      >
-        <h5 className="mb-0">{name}</h5>
-        {isSelected && <div className="text-success">✔️</div>}
-      </div>
-      {isSelected && (
-        <button
-          className="btn btn-sm btn-outline-danger position-absolute top-0 end-0"
-          onClick={() => {
-            removePlayer()
-          }}
-        >
-          ❌
-        </button>
-      )}
-    </div>
+    <Card
+      className={`player-card mx-2 my-2 ${
+        isSelected ? 'selected-player' : ''
+      } ${!isEnabled ? 'disabled-player' : ''}`}
+      style={{
+        borderColor: isSelected ? '#4e73df' : '#ced4da',
+        backgroundColor: isSelected ? '#e7f1ff' : '#f9f9f9',
+      }}
+      onClick={isEnabled ? onSelect : null}
+    >
+      <FaTimesCircle
+        className="remove-icon"
+        onClick={(e) => {
+          e.stopPropagation()
+          removePlayer()
+        }}
+      />
+      <Card.Body className="text-center">
+        <Card.Title className="player-name">{name}</Card.Title>
+      </Card.Body>
+    </Card>
   )
 }
 

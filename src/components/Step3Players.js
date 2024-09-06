@@ -49,6 +49,7 @@ const Step3Players = ({
     <div className="card">
       <div className="card-header d-flex justify-content-between align-items-center">
         <h5>Step 3: Manage Players</h5>
+        <h6>Players Count {players.length}</h6>
       </div>
       <div className="card-body">
         <PlayerList

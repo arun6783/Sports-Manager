@@ -1,60 +1,47 @@
-// import React from 'react'
-// import { Link } from 'react-router-dom'
-
-// const Home = () => {
-//   return (
-//     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-//       <h1 className="text-4xl font-bold mb-4">Welcome to Club Manager</h1>
-//       <p className="text-lg mb-8 text-center">
-//         Manage your club effortlessly with our comprehensive tools.
-//       </p>
-//       <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-//         <Link to="/setup-club">
-//           <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-//             Setup Club
-//           </button>
-//         </Link>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default Home
-
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const Home = () => {
-  const [clubResponse, setClubResponse] = useState('')
+  const [clubName, setClubName] = useState(null)
+  const [codeValid, setCodeValid] = useState(false)
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
-  const getClub = async () => {
-    try {
-      const response = await fetch('/api/getClub?clubName=Adidda')
-      if (!response.ok) {
-        if (response.status === 404) {
-          setClubResponse('Club not found')
-        } else {
-          throw new Error('Network response was not ok')
-        }
-      } else {
-        const data = await response.json()
-        setClubResponse(JSON.stringify(data, null, 2))
-      }
-    } catch (error) {
-      console.error('Failed to fetch club:', error)
-      setClubResponse('Failed to fetch club data')
+  useEffect(() => {
+    const code = searchParams.get('code')
+    if (code && code.length === 6) {
+      // Simulate club data fetching based on code
+      fetchClubNameByCode(code)
+    }
+  }, [searchParams])
+
+  const fetchClubNameByCode = (code) => {
+    if ((code = 'Adidda')) {
+      setClubName(code)
+      setCodeValid(true)
     }
   }
 
+  const handleStartClubNight = () => {
+    navigate(`/club-night?code=${clubName}`)
+  }
+
   return (
-    <div className="container mt-5">
-      <h1 className="text-center">Welcome to the Club Manager</h1>
-      <div className="text-center">
-        <button onClick={getClub} className="btn btn-primary mt-3">
-          Get Club with Name 'Adidda'
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
+      <h1 className="text-4xl font-bold mb-4">
+        {clubName ? `Welcome to ${clubName}` : 'Welcome to Club Manager'}
+      </h1>
+      {codeValid ? (
+        <button
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          onClick={handleStartClubNight}
+        >
+          Start Club Night
         </button>
-      </div>
-      {clubResponse && (
-        <pre className="mt-3 alert alert-info">{clubResponse}</pre>
+      ) : (
+        <p className="text-lg mb-8 text-center">
+          Manage your club effortlessly with our comprehensive tools.
+        </p>
       )}
     </div>
   )

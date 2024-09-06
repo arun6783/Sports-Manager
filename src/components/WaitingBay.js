@@ -1,78 +1,74 @@
 import React, { useState, useEffect } from 'react'
+import { Button } from 'react-bootstrap'
 import Player from './Player'
-import { PLAYER_GROUP } from '../shared/Constants'
+import '../styles/WaitingBay.css'
 
-function WaitingBay({ players, onAssignCourt, removePlayer }) {
+function WaitingBay({ players, onAssignCourt, removePlayer, onManagePlayers }) {
   const [selectedPlayers, setSelectedPlayers] = useState([])
 
   useEffect(() => {
-    setSelectedPlayers(players.filter((player) => player.isNext))
+    // Ensure that when modal is closed and players are selected, the waiting bay is updated
+    if (selectedPlayers.length === 0) {
+      setSelectedPlayers(players) // Populate waiting bay with initial players from selection modal
+    }
   }, [players])
 
-  const handlePlayerSelect = (player) => {
-    if (selectedPlayers.includes(player)) {
-      setSelectedPlayers(selectedPlayers.filter((p) => p.name !== player.name))
-    } else if (selectedPlayers.length === 0 || selectedPlayers.length < 4) {
-      setSelectedPlayers([...selectedPlayers, player])
+  const handleSelectPlayer = (selectedPlayer) => {
+    if (selectedPlayers.includes(selectedPlayer)) {
+      setSelectedPlayers(selectedPlayers.filter((p) => p !== selectedPlayer)) // Unselect player
+    } else if (selectedPlayers.length < 4) {
+      setSelectedPlayers([...selectedPlayers, selectedPlayer]) // Select up to 4 players
     }
   }
 
-  const isPlayerSelectable = (player, index) => {
-    if (index === 0 && selectedPlayers.length === 0) return true
-
-    if (selectedPlayers.length === 0 || index > 7) return false
-
-    switch (selectedPlayers[0].group) {
-      case PLAYER_GROUP.DIV1:
-        return (
-          player.group === PLAYER_GROUP.DIV1 ||
-          player.group === PLAYER_GROUP.DIV2
-        )
-      case PLAYER_GROUP.DIV2:
-        return (
-          player.group === PLAYER_GROUP.DIV1 ||
-          player.group === PLAYER_GROUP.DIV2 ||
-          player.group === PLAYER_GROUP.LEISURE
-        )
-      case PLAYER_GROUP.LEISURE:
-        return (
-          player.group === PLAYER_GROUP.LEISURE ||
-          player.group === PLAYER_GROUP.DIV2
-        )
-      default:
-        return false
+  const isPlayerSelectable = (firstPlayer, nextPlayer) => {
+    if (firstPlayer.tier === 'Div1') {
+      return nextPlayer.tier === 'Div1' || nextPlayer.tier === 'Div2'
+    } else if (firstPlayer.tier === 'Div2') {
+      return (
+        nextPlayer.tier === 'Div1' ||
+        nextPlayer.tier === 'Div2' ||
+        nextPlayer.tier === 'Leisure'
+      )
+    } else if (firstPlayer.tier === 'Leisure') {
+      return nextPlayer.tier === 'Leisure' || nextPlayer.tier === 'Div2'
     }
+    return false
   }
-
-  const isAssignButtonVisible = selectedPlayers.length === 4
 
   return (
-    <div className="card bg-light mb-4">
-      <div className="card-body">
-        <h5 className="card-title">Waiting Bay</h5>
-        <div className="d-flex flex-wrap">
-          {players.map((player, index) => (
+    <div className="waiting-bay">
+      <h4>Waiting Bay</h4>
+      <div className="d-flex flex-wrap justify-content-start">
+        {players.length === 0 ? (
+          <p>No players in the waiting bay</p>
+        ) : (
+          players.map((player) => (
             <Player
               key={player.name}
-              name={player.name}
-              group={player.group}
-              isNext={index === 0}
-              isSelected={selectedPlayers.some((p) => p.name === player.name)}
-              isEnabled={isPlayerSelectable(player, index)}
-              onSelect={() => handlePlayerSelect(player)}
+              name={`${player.name} (${player.tier})`}
+              isSelected={selectedPlayers.includes(player)}
+              isEnabled={true} // Always enabled since we removed `enabledPlayers`
+              onSelect={() => handleSelectPlayer(player)}
               removePlayer={() => removePlayer(player.name)}
             />
-          ))}
-        </div>
-        {isAssignButtonVisible && (
-          <button
-            className="btn btn-primary mt-3"
-            onClick={() => onAssignCourt(selectedPlayers)}
-          >
-            Assign to Court
-          </button>
+          ))
         )}
       </div>
+
+      {/* Always show Manage Players button */}
+      <Button className="mt-3" variant="primary" onClick={onManagePlayers}>
+        Manage Players
+      </Button>
+
+      <Button
+        className="mt-3 ml-3"
+        variant="primary"
+        disabled={selectedPlayers.length !== 4} // Enable only when 4 players are selected
+        onClick={() => onAssignCourt(selectedPlayers)}
+      >
+        Assign to Court
+      </Button>
     </div>
   )
 }
