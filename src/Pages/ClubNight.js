@@ -28,7 +28,16 @@ const ClubNight = () => {
         const club = await response.json()
         setClubName(club.name)
         setPlayers(club.players)
-        setCourts(Array.from({ length: parseInt(club.numCourts) }, () => ({})))
+        // Initialize courts with court data and default enabled status
+        const courtArray = Array.from(
+          { length: parseInt(club.numCourts) },
+          (_, i) => ({
+            court_id: i + 1,
+            isDisabled: false,
+            players: [],
+          })
+        )
+        setCourts(courtArray)
       }
     } catch (error) {
       console.error('Failed to fetch club data:', error)
@@ -45,13 +54,26 @@ const ClubNight = () => {
       (court) => court.players?.map((p) => p.name) || []
     )
 
-    const newPlayers = selectedPlayersDetails.filter(
-      (player) =>
+    const newPlayers = []
+
+    for (let i = 0; i < selectedPlayersDetails.length; i++) {
+      const player = selectedPlayersDetails[i]
+
+      if (
         !playersInWaitingBay.includes(player.name) &&
         !playersInCourts.includes(player.name)
+      ) {
+        newPlayers.push(player)
+      }
+    }
+
+    const remainingPlayers = selectedPlayers.filter((player) =>
+      selectedPlayersDetails.some((selected) => selected.name === player.name)
     )
 
-    setSelectedPlayers([...newPlayers])
+    const updatedWaitingBayPlayers = [...remainingPlayers, ...newPlayers]
+
+    setSelectedPlayers(updatedWaitingBayPlayers)
     setModalOpen(false)
   }
 
@@ -61,64 +83,56 @@ const ClubNight = () => {
     )
   }
 
-  const isPlayerSelectable = (firstPlayer, nextPlayer) => {
-    if (firstPlayer.tier === 'Div1') {
-      return nextPlayer.tier === 'Div1' || nextPlayer.tier === 'Div2'
-    } else if (firstPlayer.tier === 'Div2') {
-      return (
-        nextPlayer.tier === 'Div1' ||
-        nextPlayer.tier === 'Div2' ||
-        nextPlayer.tier === 'Leisure'
-      )
-    } else if (firstPlayer.tier === 'Leisure') {
-      return nextPlayer.tier === 'Leisure' || nextPlayer.tier === 'Div2'
-    }
-    return false
-  }
-
-  const handleAssignToCourt = () => {
-    if (selectedPlayers.length === 4) {
+  const handleAssignToCourt = (waitingBaySelectedPlayers) => {
+    if (waitingBaySelectedPlayers.length === 4) {
       const freeCourtIndex = courts.findIndex(
-        (court) => !court.players || court.players.length === 0
+        (court) => court.players.length === 0
       )
 
       if (freeCourtIndex !== -1) {
         const updatedCourts = [...courts]
-        updatedCourts[freeCourtIndex].players = [...selectedPlayers]
+        updatedCourts[freeCourtIndex].players = [...waitingBaySelectedPlayers]
+        updatedCourts[freeCourtIndex].isDisabled = false
         setCourts(updatedCourts)
-        setSelectedPlayers([]) // Clear waiting bay after assigning to court
+
+        const remainingPlayers = selectedPlayers.filter(
+          (player) =>
+            !waitingBaySelectedPlayers.some(
+              (selected) => selected.name === player.name
+            )
+        )
+        setSelectedPlayers(remainingPlayers)
       }
     }
   }
 
   const handleEndGame = (courtId) => {
-    const updatedCourts = [...courts]
-    const courtIndex = updatedCourts.findIndex((court) => court.id === courtId)
-
-    if (courtIndex !== -1) {
-      const playersFromCourt = updatedCourts[courtIndex].players || []
-
-      // Clear the court
-      updatedCourts[courtIndex].players = []
-
-      // Move players from the court back to the waiting bay
-      setSelectedPlayers((prevPlayers) => [...prevPlayers, ...playersFromCourt])
-
-      // Update courts state
-      setCourts(updatedCourts)
-    }
+    const updatedCourts = courts.map((court) => {
+      if (court.court_id === courtId) {
+        const playersFromCourt = court.players || []
+        setSelectedPlayers((prevPlayers) => [
+          ...prevPlayers,
+          ...playersFromCourt,
+        ])
+        return { ...court, players: [], isDisabled: false }
+      }
+      return court
+    })
+    setCourts(updatedCourts)
   }
 
   const handleDisableCourt = (courtId) => {
     const updatedCourts = courts.map((court) =>
-      court.id === courtId ? { ...court, isDisabled: !court.isDisabled } : court
+      court.court_id === courtId
+        ? { ...court, isDisabled: !court.isDisabled }
+        : court
     )
     setCourts(updatedCourts)
   }
 
   return (
     <Container className="mt-5">
-      <Row className="justify-content-between align-items-center">
+      <Row className="justify-content-between align-items-center mb-2">
         <Col xs="auto">
           <h1>Club Night: {clubName}</h1>
         </Col>
@@ -140,7 +154,7 @@ const ClubNight = () => {
         <PlayerSelectionModal
           players={players}
           selectedPlayers={selectedPlayers}
-          courts={courts} // Pass courts data to show checked & disabled players
+          courts={courts}
           onSelect={handleSelectPlayers}
           onClose={() => setModalOpen(false)}
         />
@@ -153,7 +167,6 @@ const ClubNight = () => {
             <Court
               key={index}
               courtData={court}
-              courtNumber={index + 1}
               onEndGame={handleEndGame}
               onStartGame={() => console.log('Start Game')}
               onDisableCourt={handleDisableCourt}

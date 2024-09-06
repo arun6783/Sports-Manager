@@ -2,7 +2,7 @@
 
 /* Style for the waiting bay container */
 .waiting-bay {
-  background-color: #f9f9f9;
+  background-color: var(--background-color);
   border-radius: 10px;
   padding: 20px;
   margin-bottom: 20px;
@@ -18,7 +18,7 @@
 /* Court card styles */
 .court-card {
   background-color: #ffffff;
-  border: 1px solid #ccc;
+  border: 1px solid var(--secondary-color);
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 20px;
@@ -38,9 +38,9 @@
 
 /* Disabled court style */
 .disabled-court {
-  background-color: #f0f0f0;
-  border-color: #999;
-  color: #999;
+  background-color: var(--background-color);
+  border-color: var(--secondary-color);
+  color: var(--secondary-color);
 }
 
 .disabled-court button {
@@ -49,23 +49,4 @@
 
 .disabled-court .btn-success {
   display: inline-block; /* Only show enable button */
-}
-/* src/styles/ClubNight.css */
-
-.disabled-court {
-  background-color: #f8f9fa;
-  border: 1px solid #ced4da;
-  color: #6c757d;
-  opacity: 0.5;
-}
-
-.disabled-court button {
-  display: none; /* Hide buttons for disabled court */
-}
-
-.disabled-court .btn-success {
-  display: inline-block; /* Only show enable button */
-}
-.mt-5 {
-  margin-top: 20px; 
 }
