@@ -7,7 +7,6 @@ function WaitingBay({ players, onAssignCourt, removePlayer, onManagePlayers }) {
   const [selectedPlayers, setSelectedPlayers] = useState([])
 
   useEffect(() => {
-    // Ensure that when modal is closed and players are selected, the waiting bay is updated
     if (selectedPlayers.length === 0) {
       setSelectedPlayers(players) // Populate waiting bay with initial players from selection modal
     }
@@ -19,21 +18,6 @@ function WaitingBay({ players, onAssignCourt, removePlayer, onManagePlayers }) {
     } else if (selectedPlayers.length < 4) {
       setSelectedPlayers([...selectedPlayers, selectedPlayer]) // Select up to 4 players
     }
-  }
-
-  const isPlayerSelectable = (firstPlayer, nextPlayer) => {
-    if (firstPlayer.tier === 'Div1') {
-      return nextPlayer.tier === 'Div1' || nextPlayer.tier === 'Div2'
-    } else if (firstPlayer.tier === 'Div2') {
-      return (
-        nextPlayer.tier === 'Div1' ||
-        nextPlayer.tier === 'Div2' ||
-        nextPlayer.tier === 'Leisure'
-      )
-    } else if (firstPlayer.tier === 'Leisure') {
-      return nextPlayer.tier === 'Leisure' || nextPlayer.tier === 'Div2'
-    }
-    return false
   }
 
   return (
@@ -56,7 +40,6 @@ function WaitingBay({ players, onAssignCourt, removePlayer, onManagePlayers }) {
         )}
       </div>
 
-      {/* Always show Manage Players button */}
       <Button className="mt-3" variant="primary" onClick={onManagePlayers}>
         Manage Players
       </Button>

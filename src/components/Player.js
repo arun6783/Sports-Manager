@@ -1,8 +1,6 @@
-// src/components/Player.js
-
 import React from 'react'
 import { Card } from 'react-bootstrap'
-import { FaTimesCircle } from 'react-icons/fa'
+import { FaTimesCircle, FaCheckCircle } from 'react-icons/fa'
 import '../styles/Player.css'
 
 function Player({ name, isSelected, isEnabled, onSelect, removePlayer }) {
@@ -12,8 +10,12 @@ function Player({ name, isSelected, isEnabled, onSelect, removePlayer }) {
         isSelected ? 'selected-player' : ''
       } ${!isEnabled ? 'disabled-player' : ''}`}
       style={{
-        borderColor: isSelected ? '#4e73df' : '#ced4da',
-        backgroundColor: isSelected ? '#e7f1ff' : '#f9f9f9',
+        borderColor: isSelected ? '#28a745' : '#ced4da',
+        backgroundColor: isSelected
+          ? '#e7f1ff'
+          : !isEnabled
+          ? '#f0f0f0'
+          : '#f9f9f9',
       }}
       onClick={isEnabled ? onSelect : null}
     >
@@ -24,6 +26,8 @@ function Player({ name, isSelected, isEnabled, onSelect, removePlayer }) {
           removePlayer()
         }}
       />
+      {isSelected && <FaCheckCircle className="selected-icon" />}{' '}
+      {/* Add a tick icon when selected */}
       <Card.Body className="text-center">
         <Card.Title className="player-name">{name}</Card.Title>
       </Card.Body>

@@ -1,5 +1,6 @@
 import React from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, Card } from 'react-bootstrap'
+import { FaFlag, FaPlay, FaStop } from 'react-icons/fa'
 import '../styles/Court.css'
 
 const Court = ({
@@ -12,7 +13,7 @@ const Court = ({
   const { id = courtNumber, players = [], isDisabled = false } = courtData || {}
 
   return (
-    <div className={`court ${isDisabled ? 'disabled-court' : ''}`}>
+    <Card className={`court ${isDisabled ? 'disabled-court' : ''}`}>
       <h3>{`Court ${id}`}</h3>
       <div>
         {players.length === 0 ? (
@@ -22,40 +23,37 @@ const Court = ({
         )}
       </div>
 
-      {!isDisabled ? (
-        <>
-          <Button
-            variant="success"
-            className="m-2"
-            onClick={() => onStartGame(id)}
-          >
-            Start Game
-          </Button>
-          <Button
-            variant="danger"
-            className="m-2"
-            onClick={() => onEndGame(id)}
-          >
-            End Game
-          </Button>
-          <Button
-            variant="secondary"
-            className="m-2"
-            onClick={() => onDisableCourt(id)}
-          >
-            Disable Court
-          </Button>
-        </>
-      ) : (
+      <div className="d-flex justify-content-center">
+        {!isDisabled && players.length > 0 ? (
+          <>
+            <Button
+              variant="success"
+              className="m-2"
+              onClick={() => onStartGame(id)}
+            >
+              <FaPlay /> Start Game
+            </Button>
+            <Button
+              variant="danger"
+              className="m-2"
+              onClick={() => onEndGame(id)}
+            >
+              <FaStop /> End Game
+            </Button>
+          </>
+        ) : null}
+
         <Button
-          variant="success"
+          variant="secondary"
           className="m-2"
           onClick={() => onDisableCourt(id)}
         >
-          Enable Court
+          {isDisabled ? <FaFlag /> : <FaFlag />}{' '}
+          {/* Use flag to show disabled/enabled status */}
+          {isDisabled ? ' Enable Court' : ' Disable Court'}
         </Button>
-      )}
-    </div>
+      </div>
+    </Card>
   )
 }
 
