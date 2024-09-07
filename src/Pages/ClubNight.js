@@ -10,6 +10,8 @@ const ClubNight = () => {
   const [players, setPlayers] = useState([]) // All available players
   const [selectedPlayers, setSelectedPlayers] = useState([]) // Players in the waiting bay
   const [courts, setCourts] = useState([])
+  const [tiers, setTiers] = useState([])
+
   const [isModalOpen, setModalOpen] = useState(false)
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
@@ -28,6 +30,7 @@ const ClubNight = () => {
         const club = await response.json()
         setClubName(club.name)
         setPlayers(club.players)
+        setTiers(club.tiers)
         // Initialize courts with court data and default enabled status
         const courtArray = Array.from(
           { length: parseInt(club.numCourts) },
@@ -86,7 +89,7 @@ const ClubNight = () => {
   const handleAssignToCourt = (waitingBaySelectedPlayers) => {
     if (waitingBaySelectedPlayers.length === 4) {
       const freeCourtIndex = courts.findIndex(
-        (court) => court.players.length === 0
+        (court) => court.players.length === 0 && !court.isDisabled // Check if court is not disabled
       )
 
       if (freeCourtIndex !== -1) {
@@ -157,6 +160,8 @@ const ClubNight = () => {
           courts={courts}
           onSelect={handleSelectPlayers}
           onClose={() => setModalOpen(false)}
+          setPlayers={setPlayers}
+          tiers={tiers}
         />
       )}
 

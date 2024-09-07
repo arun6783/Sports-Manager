@@ -1,17 +1,39 @@
-/* src/styles/Court.css */
-
 .court {
-  background-color: #ffffff;
-  border: 1px solid var(--secondary-color);
-  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 15px;
   border-radius: 10px;
   margin-bottom: 20px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
   transition: all 0.3s ease-in-out;
-  width: 100%;
+  max-width: 100%; /* Ensure the court doesn't overflow */
 }
 
+/* Responsive court cards */
+@media (max-width: 767px) {
+  .court {
+    width: calc(100% - 20px); /* Ensure gap of 10px on both sides */
+    margin: 10px auto; /* Center the card and add margins */
+    padding: 15px;
+  }
+}
+
+@media (min-width: 768px) {
+  .court {
+    flex-basis: 30%; /* 3 cards per row for medium screens and above */
+    margin: 10px;
+  }
+}
+
+@media (min-width: 992px) {
+  .court {
+    flex-basis: 23%; /* 4 cards per row for large screens and above */
+    margin: 10px;
+  }
+}
+
+/* Hover effect */
 .court:hover {
   box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
 }
@@ -24,19 +46,14 @@
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  background-color: var(--primary-color);
-  color: #ffffff;
 }
 
 .card-body {
   padding: 10px;
 }
 
-.btn-sm {
-  font-size: 0.875rem;
-  padding: 5px 10px;
-}
-
-.card-body.text-center .text-muted {
-  font-size: 50px;
+/* Toggle icons for enabling/disabling courts */
+.toggle-icon {
+  font-size: 1.5rem;
+  cursor: pointer;
 }

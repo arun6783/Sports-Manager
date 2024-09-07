@@ -1,17 +1,34 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button, Card } from 'react-bootstrap'
-import { FaFlag, FaPlay, FaStop, FaBan, FaPowerOff } from 'react-icons/fa' // Added FaPowerOff for Enable/Disable
+import {
+  FaFlag,
+  FaPlay,
+  FaStop,
+  FaBan,
+  FaToggleOff,
+  FaToggleOn,
+} from 'react-icons/fa'
 import '../styles/Court.css'
 
 const Court = ({ courtData, onEndGame, onStartGame, onDisableCourt }) => {
   const { players = [], isDisabled = false, court_id } = courtData
+  const [gameInProgress, setGameInProgress] = useState(false)
+
+  const handleStartGame = () => {
+    onStartGame(court_id)
+    setGameInProgress(true)
+  }
+
+  const handleEndGame = () => {
+    onEndGame(court_id)
+    setGameInProgress(false)
+  }
 
   return (
     <Card
       className={`court ${
         isDisabled ? 'disabled-court' : ''
-      } border-secondary m-3`}
-      style={{ maxWidth: '18rem' }}
+      } border-secondary m-3 shadow-sm`}
     >
       <div className="card-header d-flex justify-content-between align-items-center">
         <span>{`Court ${court_id}`}</span>
@@ -21,14 +38,15 @@ const Court = ({ courtData, onEndGame, onStartGame, onDisableCourt }) => {
               <Button
                 variant="success"
                 className="btn-sm mx-1"
-                onClick={() => onStartGame(court_id)}
+                onClick={handleStartGame}
+                disabled={gameInProgress}
               >
                 <FaPlay />
               </Button>
               <Button
                 variant="danger"
                 className="btn-sm mx-1"
-                onClick={() => onEndGame(court_id)}
+                onClick={handleEndGame}
               >
                 <FaStop />
               </Button>
@@ -36,44 +54,41 @@ const Court = ({ courtData, onEndGame, onStartGame, onDisableCourt }) => {
           )}
 
           {!isDisabled && players.length === 0 && (
-            <Button
-              variant="secondary"
-              className="btn-sm mx-1"
+            <FaToggleOff
+              className="toggle-icon"
               onClick={() => onDisableCourt(court_id)}
-            >
-              <FaPowerOff />
-            </Button>
+            />
           )}
           {isDisabled && (
-            <Button
-              variant="success"
-              className="btn-sm mx-1"
+            <FaToggleOn
+              className="toggle-icon"
               onClick={() => onDisableCourt(court_id)}
-            >
-              <FaPowerOff />
-            </Button>
+            />
           )}
         </div>
-        
       </div>
-      {!isDisabled ? (
-        <div className="card-body text-secondary">
-          {players.length === 0 ? (
-            <h5 className="card-title">No players assigned yet</h5>
-          ) : (
-            players.map((player) => (
-              <p key={player.name} className="card-text">
-                {player.name}
-              </p>
-            ))
-          )}
-        </div>
-      ) : (
-        <div className="card-body text-secondary text-center">
-          <FaBan size={50} className="text-muted" />{' '}
-          <h5 className="card-title mt-2">Court Disabled</h5>
+      {gameInProgress && (
+        <div className="text-end pe-2">
+          <small className="text-muted">Game in progress</small>
         </div>
       )}
+
+      {/* Conditional rendering for court body */}
+      <div className={`card-body ${isDisabled ? 'disabled-card-body' : ''}`}>
+        {isDisabled ? (
+          <div className="card-body-disabled-overlay">
+            <h3 className="card-title mt-4">Court Disabled</h3>
+          </div>
+        ) : players.length === 0 ? (
+          <h5 className="card-title">No players assigned yet</h5>
+        ) : (
+          players.map((player) => (
+            <p key={player.name} className="card-text fw-bold">
+              {player.name}
+            </p>
+          ))
+        )}
+      </div>
     </Card>
   )
 }
