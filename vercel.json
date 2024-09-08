@@ -2,7 +2,10 @@
   "builds": [
     {
       "src": "src/**/*",
-      "use": "@vercel/static-build"
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
     },
     {
       "src": "api/**/*.js",
@@ -13,7 +16,11 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ],
-  "ignoreFiles": ["server.js"]
+  "ignoreFiles": ["server.js", "node_modules", "node_modules/"]
 }
