@@ -1,13 +1,6 @@
 import React, { useState } from 'react'
 import { Button, Card } from 'react-bootstrap'
-import {
-  FaFlag,
-  FaPlay,
-  FaStop,
-  FaBan,
-  FaToggleOff,
-  FaToggleOn,
-} from 'react-icons/fa'
+import { FaPlay, FaStop, FaToggleOff, FaToggleOn } from 'react-icons/fa'
 import '../styles/Court.css'
 
 const Court = ({ courtData, onEndGame, onStartGame, onDisableCourt }) => {

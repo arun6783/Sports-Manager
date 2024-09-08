@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import TierList from './TierList'
 
 const Step2Tiers = ({ tiers, setTiers, onNext, onPrev }) => {
