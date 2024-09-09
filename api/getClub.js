@@ -1,24 +1,24 @@
-const { validationResult } = require('express-validator')
-const { validateClubNameQuery } = require('../middleware/validations')
 const { getClubByName } = require('../lib/clubApi')
 
 module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
-    await validateClubNameQuery[0].run(req)
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() })
-    }
-
     const { clubName } = req.query
 
+    // Manual validation to check if clubName is provided
+    if (!clubName || clubName.trim() === '') {
+      return res.status(400).json({ message: 'Club name is required' })
+    }
+
     try {
-      const club = await getClubByName(clubName)
-      if (club) {
-        res.status(200).json(club)
-      } else {
-        res.status(404).json({ message: 'Club not found' })
+      const clubData = await getClubByName(clubName)
+
+      // Return 404 if club not found
+      if (!clubData) {
+        return res.status(404).json({ message: 'Club not found' })
       }
+
+      // Return 200 if club is found
+      res.status(200).json(clubData)
     } catch (error) {
       console.error('Error fetching club:', error)
       res.status(500).json({ message: 'Internal Server Error' })

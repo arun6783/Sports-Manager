@@ -1,36 +1,55 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Container, Row, Col, Button } from 'react-bootstrap'
+import { Container, Row, Col, Button, Modal, Form } from 'react-bootstrap'
 import WaitingBay from '../components/WaitingBay'
 import PlayerSelectionModal from '../components/PlayerSelectionModal'
 import Court from '../components/Court'
+import { DEFAULT_TIER_COLORS } from '../shared/Constants'
 
 const ClubNight = () => {
   const [clubName, setClubName] = useState('')
-  const [players, setPlayers] = useState([]) // All available players
-  const [selectedPlayers, setSelectedPlayers] = useState([]) // Players in the waiting bay
+  const [players, setPlayers] = useState([])
+  const [selectedPlayers, setSelectedPlayers] = useState([])
   const [courts, setCourts] = useState([])
   const [tiers, setTiers] = useState([])
+  const [tierColors, setTierColors] = useState(DEFAULT_TIER_COLORS)
+  const [loading, setLoading] = useState(false)
 
   const [isModalOpen, setModalOpen] = useState(false)
+  const [isEndClubNightOpen, setEndClubNightOpen] = useState(false)
+  const [confirmationText, setConfirmationText] = useState('')
+  const [shuttleBoxes, setShuttleBoxes] = useState(0)
+
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
   useEffect(() => {
-    const clubNameParam = searchParams.get('code')
-    if (clubNameParam) {
+    const clubNameParam = searchParams.get('club')
+
+    console.log('useEffect searchParams:', clubNameParam)
+
+    if (clubNameParam && !loading) {
       fetchClubData(clubNameParam)
     }
   }, [searchParams])
 
   const fetchClubData = async (clubNameParam) => {
+    setLoading(true)
     try {
       const response = await fetch(`/api/getClub?clubName=${clubNameParam}`)
       if (response.ok) {
         const club = await response.json()
-        setClubName(club.name)
+        setClubName(club.clubName)
         setPlayers(club.players)
         setTiers(club.tiers)
+
+        // Create a color map based on the tier names
+        const colorMap = {}
+        club.tiers.forEach((tier) => {
+          colorMap[tier.name] = tier.color || DEFAULT_TIER_COLORS[tier.name]
+        })
+        setTierColors(colorMap)
+
         // Initialize courts with court data and default enabled status
         const courtArray = Array.from(
           { length: parseInt(club.numCourts) },
@@ -44,6 +63,8 @@ const ClubNight = () => {
       }
     } catch (error) {
       console.error('Failed to fetch club data:', error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -89,7 +110,7 @@ const ClubNight = () => {
   const handleAssignToCourt = (waitingBaySelectedPlayers) => {
     if (waitingBaySelectedPlayers.length === 4) {
       const freeCourtIndex = courts.findIndex(
-        (court) => court.players.length === 0 && !court.isDisabled // Check if court is not disabled
+        (court) => court.players.length === 0 && !court.isDisabled
       )
 
       if (freeCourtIndex !== -1) {
@@ -109,10 +130,30 @@ const ClubNight = () => {
     }
   }
 
-  const handleEndGame = (courtId) => {
+  const handleEndGame = async (courtId) => {
+    const courtToEnd = courts.find((court) => court.court_id === courtId)
+    if (!courtToEnd) return
+
+    const playersFromCourt = courtToEnd.players || []
+
+    // Save the court and players info to the API
+    try {
+      await fetch('/api/endGame', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courtId,
+          players: playersFromCourt,
+          date: new Date().toISOString(),
+        }),
+      })
+    } catch (error) {
+      console.error('Error ending the game:', error)
+    }
+
+    // Reset the court after ending the game
     const updatedCourts = courts.map((court) => {
       if (court.court_id === courtId) {
-        const playersFromCourt = court.players || []
         setSelectedPlayers((prevPlayers) => [
           ...prevPlayers,
           ...playersFromCourt,
@@ -133,6 +174,41 @@ const ClubNight = () => {
     setCourts(updatedCourts)
   }
 
+  const handleEndClubNight = async () => {
+    if (confirmationText === 'Adidda' && shuttleBoxes > 0) {
+      const playersPlayedTonight = courts.flatMap((court) => court.players)
+
+      const clubNightData = {
+        players: playersPlayedTonight,
+        shuttlesUsed: shuttleBoxes,
+        date: new Date().toISOString(),
+      }
+
+      // Save club night data to the API
+      try {
+        const response = await fetch('/api/endClubNight', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(clubNightData),
+        })
+
+        if (response.ok) {
+          alert('Club night ended successfully!')
+          setEndClubNightOpen(false)
+          setConfirmationText('')
+          setShuttleBoxes(0)
+          navigate('/')
+        } else {
+          console.error('Failed to end club night')
+        }
+      } catch (error) {
+        console.error('Error:', error)
+      }
+    } else {
+      alert('Please enter correct confirmation and shuttle boxes used')
+    }
+  }
+
   return (
     <Container className="mt-5">
       <Row className="justify-content-between align-items-center mb-2">
@@ -140,7 +216,7 @@ const ClubNight = () => {
           <h1>Club Night: {clubName}</h1>
         </Col>
         <Col xs="auto" className="text-end">
-          <Button variant="danger" onClick={() => navigate('/')}>
+          <Button variant="danger" onClick={() => setEndClubNightOpen(true)}>
             End Club Night
           </Button>
         </Col>
@@ -148,9 +224,10 @@ const ClubNight = () => {
 
       <WaitingBay
         players={selectedPlayers}
-        onManagePlayers={handleManagePlayers}
+        tiers={tiers} // Pass tiers as a prop
         onAssignCourt={handleAssignToCourt}
         removePlayer={handleRemovePlayer}
+        onManagePlayers={handleManagePlayers}
       />
 
       {isModalOpen && (
@@ -162,6 +239,7 @@ const ClubNight = () => {
           onClose={() => setModalOpen(false)}
           setPlayers={setPlayers}
           tiers={tiers}
+          tierColors={tierColors} // Pass dynamic tier colors to the modal
         />
       )}
 
@@ -181,6 +259,50 @@ const ClubNight = () => {
           <p>No courts available</p>
         )}
       </Row>
+
+      {/* End Club Night Popup */}
+      {isEndClubNightOpen && (
+        <Modal
+          show={isEndClubNightOpen}
+          onHide={() => setEndClubNightOpen(false)}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>End Club Night</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group controlId="confirmationText">
+                <Form.Label>Enter "Adidda" to confirm:</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={confirmationText}
+                  onChange={(e) => setConfirmationText(e.target.value)}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="shuttleBoxes">
+                <Form.Label>Shuttle boxes used:</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={shuttleBoxes}
+                  onChange={(e) => setShuttleBoxes(Number(e.target.value))}
+                />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => setEndClubNightOpen(false)}
+            >
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleEndClubNight}>
+              End Club Night
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
     </Container>
   )
 }

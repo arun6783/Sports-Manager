@@ -4,15 +4,16 @@ import Step2Tiers from '../components/Step2Tiers'
 import Step3Players from '../components/Step3Players'
 import Summary from '../components/Summary'
 import { useMessage } from '../Context/MessageContext'
+import SetupTierRules from '../components/SetupTierRules'
 
 const SetupClub = () => {
   const [currentStep, setCurrentStep] = useState(1)
   const [clubName, setClubName] = useState('Adidda')
-  const [rules, setRules] = useState('round-robin')
+  const [rules, setRules] = useState('multi-tier-peg')
   const [numCourts, setNumCourts] = useState(1)
   const [players, setPlayers] = useState([])
   const [tiers, setTiers] = useState([])
-
+  const [tierRules, setTierRules] = useState({})
   const { showMessage } = useMessage()
 
   // Fetch existing club data on component mount
@@ -22,7 +23,7 @@ const SetupClub = () => {
         const response = await fetch(`/api/getClub?clubName=${clubName}`)
         if (response.ok) {
           const club = await response.json()
-          setClubName(club.name)
+          setClubName(club.clubName)
           setRules(club.rules)
           setNumCourts(club.numCourts)
           setPlayers(club.players)
@@ -30,6 +31,8 @@ const SetupClub = () => {
           setCurrentStep(1) // Reset to the first step
         } else if (response.status === 404) {
           showMessage('warning', 'Club not found. You can create a new club.')
+          setPlayers([])
+          setTiers([])
         } else {
           throw new Error('Failed to load club data')
         }
@@ -37,7 +40,6 @@ const SetupClub = () => {
         showMessage('error', error.message)
       }
     }
-
     fetchClubData()
   }, [clubName, showMessage])
 
@@ -51,7 +53,6 @@ const SetupClub = () => {
 
   const handleSaveClub = async () => {
     try {
-      console.log('**tiers', tiers)
       const response = await fetch('/api/saveClub', {
         method: 'POST',
         headers: {
@@ -63,10 +64,20 @@ const SetupClub = () => {
       if (!response.ok) {
         throw new Error('Failed to save the club')
       }
-      showMessage('success', 'Club saved successfully')
+      alert('Club saved successfully')
     } catch (error) {
-      showMessage('error', error.message)
+      alert('Error saving the club: ' + error.message)
     }
+  }
+
+  const handleAddTier = (newTierName, newTierColor) => {
+    const newTier = { name: newTierName, color: newTierColor }
+    setTiers([...tiers, newTier])
+    setTierRules({ ...tierRules, [newTierName]: [] })
+  }
+
+  const handleRuleChange = (tier, allowedTiers) => {
+    setTierRules({ ...tierRules, [tier]: allowedTiers })
   }
 
   const renderStep = () => {
@@ -85,9 +96,12 @@ const SetupClub = () => {
         )
       case 2:
         return rules === 'multi-tier-peg' ? (
-          <Step2Tiers
+          <SetupTierRules
             tiers={tiers}
             setTiers={setTiers}
+            tierRules={tierRules}
+            handleRuleChange={handleRuleChange}
+            handleAddTier={handleAddTier}
             onNext={handleNextStep}
             onPrev={handlePrevStep}
           />

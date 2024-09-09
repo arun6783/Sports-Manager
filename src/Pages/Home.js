@@ -8,10 +8,9 @@ const Home = () => {
   const [searchParams] = useSearchParams()
 
   useEffect(() => {
-    const code = searchParams.get('code')
-    if (code && code.length === 6) {
-      // Simulate club data fetching based on code
-      fetchClubNameByCode(code)
+    const club = searchParams.get('club')
+    if (club && club.length === 6) {
+      fetchClubNameByCode(club)
     }
   }, [searchParams])
 
@@ -23,7 +22,7 @@ const Home = () => {
   }
 
   const handleStartClubNight = () => {
-    navigate(`/club-night?code=${clubName}`)
+    navigate(`/club-night?club=${clubName}`)
   }
 
   return (

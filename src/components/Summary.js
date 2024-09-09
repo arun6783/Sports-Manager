@@ -26,10 +26,13 @@ const Summary = ({
         </ul>
         {rules === 'multi-tier-peg' && (
           <>
-            <h6>Tiers:</h6>
+            <h6>Tiers and Allowed Selections:</h6>
             <ul>
               {tiers.map((tier, index) => (
-                <li key={index}>{tier.name}</li>
+                <li key={index}>
+                  <strong>{tier.name}</strong> - Allowed to select:{' '}
+                  {tier.allowedTiers?.join(', ') || 'None'}
+                </li>
               ))}
             </ul>
           </>

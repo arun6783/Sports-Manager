@@ -2,6 +2,7 @@ import React from 'react'
 import { Card } from 'react-bootstrap'
 import { FaPauseCircle, FaPlayCircle } from 'react-icons/fa'
 import '../styles/Player.css'
+import { DEFAULT_TIER_COLORS } from '../shared/Constants'
 
 function Player({
   player,
@@ -11,15 +12,8 @@ function Player({
   onSelect,
   onPause,
   removeSelection,
+  tierColors = DEFAULT_TIER_COLORS,
 }) {
-  console.log('player - ', player)
-  console.log('player enabled- ', isEnabled)
-  const tierColors = {
-    Div1: '#419b09',
-    Div2: '#c49d08',
-    Leisure: '#b61754',
-  }
-
   const { name, tier } = player
 
   const handlePauseToggle = (e) => {
@@ -36,8 +30,8 @@ function Player({
       className={`player-card mx-2 my-2 ${isSelected ? 'selected-player' : ''}`}
       style={{
         borderColor: isSelected ? '#4e73df' : '#ced4da',
-        backgroundColor: tierColors[tier],
-        opacity: isPaused ? 0.6 : 1, // Slightly dim out paused player
+        backgroundColor: tierColors[tier] || '#ced4da',
+        opacity: isPaused ? 0.6 : 1,
         width: '120px',
         height: '120px',
       }}
@@ -64,7 +58,7 @@ function Player({
         <Card.Title
           className="player-name"
           style={{
-            border: isSelected ? '2px solid #28a745' : 'none',
+            border: isSelected ? '2px solid #4e73df' : 'none',
             borderRadius: '10px',
             padding: '5px',
             display: 'inline-block',

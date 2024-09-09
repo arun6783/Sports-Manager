@@ -4,7 +4,13 @@ import Player from './Player'
 import '../styles/WaitingBay.css'
 import { PlayerSelectionStrategyFactory } from '../strategies/PlayerSelectionStrategy'
 
-function WaitingBay({ players, onAssignCourt, removePlayer, onManagePlayers }) {
+function WaitingBay({
+  players,
+  tiers,
+  onAssignCourt,
+  removePlayer,
+  onManagePlayers,
+}) {
   const [selectedPlayers, setSelectedPlayers] = useState([])
   const [pausedPlayers, setPausedPlayers] = useState([]) // Track paused players
 
@@ -59,7 +65,8 @@ function WaitingBay({ players, onAssignCourt, removePlayer, onManagePlayers }) {
   // Logic to check if next player is selectable based on strategy pattern
   const isPlayerSelectable = (firstPlayer, nextPlayer) => {
     const strategy = PlayerSelectionStrategyFactory.getStrategy(
-      firstPlayer.tier
+      firstPlayer.tier,
+      tiers
     )
     return strategy.canSelectPlayer(firstPlayer, nextPlayer)
   }

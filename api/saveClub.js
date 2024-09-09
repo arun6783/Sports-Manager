@@ -1,21 +1,22 @@
-const { validationResult } = require('express-validator')
-const { validateClubData } = require('../middleware/validations')
 const { createOrUpdateClub } = require('../lib/clubApi')
 
 module.exports = async function handler(req, res) {
   if (req.method === 'POST') {
-    await validateClubData[0].run(req) 
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() })
-    }
+    const { clubName, rules, numCourts, players, tiers } = req.body
 
     try {
-      const result = await createOrUpdateClub(req.body)
+      const result = await createOrUpdateClub({
+        clubName,
+        rules,
+        numCourts,
+        players,
+        tiers,
+      })
       res.status(200).json(result)
     } catch (error) {
-      console.error('Error saving club:', error)
-      res.status(500).json({ message: 'Internal Server Error' })
+      res
+        .status(500)
+        .json({ message: 'Error saving club', error: error.message })
     }
   } else {
     res.status(405).json({ message: 'Method Not Allowed' })
