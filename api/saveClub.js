@@ -10,7 +10,7 @@ module.exports = async function handler(req, res) {
         rules,
         numCourts,
         players,
-        tiers,
+        tiers, // Ensure allowedTiers are passed to MongoDB
       })
       res.status(200).json(result)
     } catch (error) {

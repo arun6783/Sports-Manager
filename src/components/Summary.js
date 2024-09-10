@@ -31,7 +31,9 @@ const Summary = ({
               {tiers.map((tier, index) => (
                 <li key={index}>
                   <strong>{tier.name}</strong> - Allowed to select:{' '}
-                  {tier.allowedTiers?.join(', ') || 'None'}
+                  {tier.allowedTiers?.length > 0
+                    ? tier.allowedTiers.join(', ')
+                    : 'None'}
                 </li>
               ))}
             </ul>

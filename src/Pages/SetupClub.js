@@ -51,6 +51,28 @@ const SetupClub = () => {
     setCurrentStep((prev) => prev - 1)
   }
 
+  // Modify this method to also update the allowedTiers in the tiers array
+  const handleRuleChange = (tierName, allowedTiers) => {
+    // Update the tierRules state
+    setTierRules({ ...tierRules, [tierName]: allowedTiers })
+
+    // Update the allowedTiers in the tiers array
+    const updatedTiers = tiers.map((tier) => {
+      if (tier.name === tierName) {
+        return { ...tier, allowedTiers }
+      }
+      return tier
+    })
+
+    setTiers(updatedTiers)
+  }
+
+  const handleAddTier = (newTierName, newTierColor) => {
+    const newTier = { name: newTierName, color: newTierColor }
+    setTiers([...tiers, newTier])
+    setTierRules({ ...tierRules, [newTierName]: [] })
+  }
+
   const handleSaveClub = async () => {
     try {
       const response = await fetch('/api/saveClub', {
@@ -58,7 +80,13 @@ const SetupClub = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ clubName, rules, numCourts, players, tiers }),
+        body: JSON.stringify({
+          clubName,
+          rules,
+          numCourts,
+          players,
+          tiers, // This now includes allowedTiers in the tiers array
+        }),
       })
 
       if (!response.ok) {
@@ -68,16 +96,6 @@ const SetupClub = () => {
     } catch (error) {
       alert('Error saving the club: ' + error.message)
     }
-  }
-
-  const handleAddTier = (newTierName, newTierColor) => {
-    const newTier = { name: newTierName, color: newTierColor }
-    setTiers([...tiers, newTier])
-    setTierRules({ ...tierRules, [newTierName]: [] })
-  }
-
-  const handleRuleChange = (tier, allowedTiers) => {
-    setTierRules({ ...tierRules, [tier]: allowedTiers })
   }
 
   const renderStep = () => {

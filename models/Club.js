@@ -10,7 +10,7 @@ const clubSchema = new mongoose.Schema({
     required: [true, 'Club rules are required'],
   },
   numCourts: {
-    type: String, // Use String to match your sample data structure
+    type: String,
     required: [true, 'Number of courts is required'],
   },
   players: [
@@ -23,6 +23,7 @@ const clubSchema = new mongoose.Schema({
     {
       name: String,
       description: String,
+      allowedTiers: [String],
     },
   ],
 })

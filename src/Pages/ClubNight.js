@@ -14,6 +14,8 @@ const ClubNight = () => {
   const [tiers, setTiers] = useState([])
   const [tierColors, setTierColors] = useState(DEFAULT_TIER_COLORS)
   const [loading, setLoading] = useState(false)
+  const [clubNightId, setClubNightId] = useState(null) // Store the clubNightId
+  const [clubId, setClubId] = useState(null)
 
   const [isModalOpen, setModalOpen] = useState(false)
   const [isEndClubNightOpen, setEndClubNightOpen] = useState(false)
@@ -33,6 +35,25 @@ const ClubNight = () => {
     }
   }, [searchParams])
 
+  const startClubNight = async (clubNameParam) => {
+    try {
+      const response = await fetch('/api/startClubNight', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clubName: clubNameParam }),
+      })
+
+      if (response.ok) {
+        const clubNight = await response.json()
+        setClubNightId(clubNight._id)
+      } else {
+        console.error('Failed to start club night')
+      }
+    } catch (error) {
+      console.error('Error starting club night:', error)
+    }
+  }
+
   const fetchClubData = async (clubNameParam) => {
     setLoading(true)
     try {
@@ -42,7 +63,7 @@ const ClubNight = () => {
         setClubName(club.clubName)
         setPlayers(club.players)
         setTiers(club.tiers)
-
+        setClubId(club._id)
         // Create a color map based on the tier names
         const colorMap = {}
         club.tiers.forEach((tier) => {
@@ -60,6 +81,9 @@ const ClubNight = () => {
           })
         )
         setCourts(courtArray)
+
+        // Start the club night
+        await startClubNight(clubNameParam) // Start the club night and set the clubNightId
       }
     } catch (error) {
       console.error('Failed to fetch club data:', error)
@@ -143,6 +167,7 @@ const ClubNight = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           courtId,
+          clubNightId,
           players: playersFromCourt,
           date: new Date().toISOString(),
         }),
@@ -179,6 +204,7 @@ const ClubNight = () => {
       const playersPlayedTonight = courts.flatMap((court) => court.players)
 
       const clubNightData = {
+        clubNightId,
         players: playersPlayedTonight,
         shuttlesUsed: shuttleBoxes,
         date: new Date().toISOString(),
