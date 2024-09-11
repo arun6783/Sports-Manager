@@ -2,17 +2,20 @@ const ClubNight = require('../models/ClubNight')
 
 module.exports = async function handler(req, res) {
   if (req.method === 'POST') {
-    const { clubName } = req.body
+    const { clubName, clubId } = req.body
 
-    // Ensure the clubName is provided
-    if (!clubName) {
-      return res.status(400).json({ message: 'Club name is required' })
+    // Ensure the clubName and clubId are provided
+    if (!clubName || !clubId) {
+      return res
+        .status(400)
+        .json({ message: 'Club name and Club ID are required' })
     }
 
     try {
       // Create a new club night entry
       const newClubNight = new ClubNight({
         clubName,
+        clubId, // Pass the clubId when starting the club night
       })
 
       // Save the new club night to the database

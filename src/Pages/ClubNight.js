@@ -35,12 +35,12 @@ const ClubNight = () => {
     }
   }, [searchParams])
 
-  const startClubNight = async (clubNameParam) => {
+  const startClubNight = async (clubNameParam, clubIdParam) => {
     try {
       const response = await fetch('/api/startClubNight', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clubName: clubNameParam }),
+        body: JSON.stringify({ clubName: clubNameParam, clubId: clubIdParam }), // Send both clubName and clubId
       })
 
       if (response.ok) {
@@ -83,7 +83,7 @@ const ClubNight = () => {
         setCourts(courtArray)
 
         // Start the club night
-        await startClubNight(clubNameParam) // Start the club night and set the clubNightId
+        await startClubNight(clubNameParam, club._id) // Pass both clubName and clubId
       }
     } catch (error) {
       console.error('Failed to fetch club data:', error)
@@ -160,14 +160,13 @@ const ClubNight = () => {
 
     const playersFromCourt = courtToEnd.players || []
 
-    // Save the court and players info to the API
     try {
       await fetch('/api/endGame', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           courtId,
-          clubNightId,
+          clubNightId, // Pass clubNightId here
           players: playersFromCourt,
           date: new Date().toISOString(),
         }),

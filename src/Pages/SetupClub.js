@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import Step1ClubDetails from '../components/Step1ClubDetails'
-import Step2Tiers from '../components/Step2Tiers'
 import Step3Players from '../components/Step3Players'
 import Summary from '../components/Summary'
 import { useMessage } from '../Context/MessageContext'
